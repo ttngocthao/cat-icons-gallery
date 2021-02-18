@@ -8,4 +8,8 @@ backend structure
 +index
 +package.json
 
+initialise a default ESlint: node_modules/.bin/eslint --init
+to watch test use command line: npm run test -- --watch
+to run a single test, run this command line: npm test -- -t 'when list has only one blog, equals the likes of that'
+
 
