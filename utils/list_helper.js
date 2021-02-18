@@ -23,6 +23,11 @@ const favoriteBlog =(blogs)=>{
     
 }
 
+
+const mostBlogs =(blogsList)=>{
+    return {}
+}
+
 module.exports={
-    dummy,totalLikes,favoriteBlog
+    dummy,totalLikes,favoriteBlog,mostBlogs
 }

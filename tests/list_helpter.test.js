@@ -1,3 +1,4 @@
+const { describe } = require('yargs')
 const listHelper = require('../utils/list_helper')
 
 
@@ -120,5 +121,20 @@ describe('finds out which blog has most likes',()=>{
                 author: "Edsger ",
                 likes: 12
             })
+    })
+})
+
+describe('finds author who has the largest amount of blogs in an array of blogs',()=>{
+
+    test('returns empty if an array of blogs is empty',()=>{
+
+    })
+
+    test('returns an object (with author and blogs) of the author who has the largest amount of blogs',()=>{
+
+    })
+
+    test('if there are many top blogges, return any of them',()=>{
+        
     })
 })
