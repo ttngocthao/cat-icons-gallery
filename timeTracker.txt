@@ -1,3 +1,11 @@
-4.1 - 25mins 
+4.1 to 4.2- 40mins
+//================//
+backend structure
++controllers -> routes
++models
++utils -> config, logger, middleware
++app
++index
++package.json
 
 
