@@ -13,3 +13,18 @@ to watch test use command line: npm run test -- --watch
 to run a single test, run this command line: npm test -- -t 'when list has only one blog, equals the likes of that'
 
 
+4.3 to 4.4 - 60mins
+4.5 - 20mins
+//================//
+how powerful reduce method : to add up, to compare array of objects.
+
+4.6 - 
+//===============//
+Lodash library: 
+    Lodash makes JavaScript easier by taking the hassle out of working with arrays, numbers, objects, strings, etc.
+    Lodash’s modular methods are great for:
+
+    Iterating arrays, objects, & strings
+    Manipulating & testing values
+    Creating composite functions
+

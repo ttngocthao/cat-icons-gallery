@@ -40,3 +40,85 @@ describe('total likes',()=>{
         expect(result).toBe(15)
     })
 })
+
+describe('finds out which blog has most likes',()=>{
+
+    test('empty blog list',()=>{
+        const blogs=[]
+        const result = listHelper.favoriteBlog(blogs)
+        expect(result).toEqual({})
+    })
+
+    test('blog list has 2 items, returns the blog with highest likes',()=>{
+        const blogs = [
+            {
+                title: "Canonical string reduction",
+                author: "Edsger W. Dijkstra",
+                likes: 12
+            },
+            {
+                title: "Canonical string reduction",
+                author: "Edsger W. Dijkstra",
+                likes: 6
+            },
+        ]
+        const result = listHelper.favoriteBlog(blogs)
+        expect(result).toEqual({
+                title: "Canonical string reduction",
+                author: "Edsger W. Dijkstra",
+                likes: 12
+            })
+    })
+
+    test('blog list has more than 2 items, returns the blog with highest likes',()=>{
+        const blogs = [
+             {
+                title: "Canonical string reduction",
+                author: "Edsger W. Dijkstra",
+                likes: 4
+            },
+            {
+                title: "Canonical string reduction",
+                author: "Edsger W. Dijkstra",
+                likes: 12
+            },
+            {
+                title: "Canonical string reduction",
+                author: "Edsger W. Dijkstra",
+                likes: 6
+            },
+        ]
+        const result = listHelper.favoriteBlog(blogs)
+        expect(result).toEqual({
+                title: "Canonical string reduction",
+                author: "Edsger W. Dijkstra",
+                likes: 12
+            })
+    })
+
+    test('blog list has more than 2 items and many top favorites, returns one of them',()=>{
+         const blogs = [
+            {
+                title: "First",
+                author: "Edsger ",
+                likes: 12
+            },
+            {
+                title: "Second",
+                author: " Dijkstra",
+                likes: 12
+            },
+            {
+                title: "Canonical string reduction",
+                author: "Edsger W. Dijkstra",
+                likes: 6
+            },
+        ]
+        const result = listHelper.favoriteBlog(blogs)
+        expect(result).toEqual({
+                title: "First",
+                author: "Edsger ",
+                likes: 12
+            })
+    })
+})
