@@ -18,7 +18,7 @@ to run a single test, run this command line: npm test -- -t 'when list has only 
 //================//
 how powerful reduce method : to add up, to compare array of objects.
 
-4.6 - 
+4.6 - so far 10mins set up
 //===============//
 Lodash library: 
     Lodash makes JavaScript easier by taking the hassle out of working with arrays, numbers, objects, strings, etc.
