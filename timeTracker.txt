@@ -29,3 +29,7 @@ Lodash library:
         -- Creating composite functions
 misunderstood the argument - so need to fix the function mostBlog - took additional 45mins
 
+4.7 - 3h
+//==============//
+really hard to re-structure the data.
+learned how powerful reduce method is --> however still not 100% confident using it T_T

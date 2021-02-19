@@ -12,7 +12,7 @@ module.exports = {
 	"rules": {
 		"indent": [
 			"error",
-			"tab"
+			"spaces"
 		],
 		"linebreak-style": [
 			"error",
