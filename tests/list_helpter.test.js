@@ -1,4 +1,3 @@
-const { describe } = require('yargs')
 const listHelper = require('../utils/list_helper')
 
 
@@ -90,6 +89,7 @@ describe('finds out which blog has most likes',()=>{
             },
         ]
         const result = listHelper.favoriteBlog(blogs)
+    
         expect(result).toEqual({
                 title: "Canonical string reduction",
                 author: "Edsger W. Dijkstra",
@@ -127,14 +127,31 @@ describe('finds out which blog has most likes',()=>{
 describe('finds author who has the largest amount of blogs in an array of blogs',()=>{
 
     test('returns empty if an array of blogs is empty',()=>{
-
+        const blogs=[]
+        const result = listHelper.mostBlogs(blogs)
+        expect(result).toEqual({})
     })
 
     test('returns an object (with author and blogs) of the author who has the largest amount of blogs',()=>{
-
+        const blogs=[
+            {id:'1',author:'Robert',blogs:3},
+            {id:'2',author:'Candy',blogs:15},
+            {id:'3',author:'John',blogs:8},
+        ]
+        const result = listHelper.mostBlogs(blogs)
+        console.log(result)
+        debugger
+        expect(result).toEqual({id:'2',author:'Candy',blogs:15})
     })
 
     test('if there are many top blogges, return any of them',()=>{
-        
+        const blogs=[
+            {id:'1',author:'Robert',blogs:3},
+            {id:'2',author:'Candy',blogs:8},
+            {id:'3',author:'John',blogs:8},
+            {id:'3',author:'Jane',blogs:5},
+        ]
+         const result = listHelper.mostBlogs(blogs)
+        expect(result).toEqual({id:'2',author:'Candy',blogs:8})
     })
 })

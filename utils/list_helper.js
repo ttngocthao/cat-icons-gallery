@@ -17,7 +17,7 @@ const favoriteBlog =(blogs)=>{
                     return   prev.likes > current.likes ? prev : current
                 }
             
-            })
+            },)
         return topFavourite
     }
     
@@ -25,7 +25,20 @@ const favoriteBlog =(blogs)=>{
 
 
 const mostBlogs =(blogsList)=>{
-    return {}
+    if(blogsList.length===0){
+        return {}
+    }else{
+       const mostBlogs =  blogsList.reduce((pre,current)=>{
+            if(pre.blogs === current.blogs){
+                return pre
+            }else{
+               
+                return  pre.blogs > current.blogs ? pre : current
+            }
+        })
+        return mostBlogs
+    }
+    
 }
 
 module.exports={
