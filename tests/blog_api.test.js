@@ -13,7 +13,7 @@ const initialBlogs = require('./blogs_data')
 //   await mongoose.connect(url, { useNewUrlParser: true })
 //   done()
 // })
-describe('get request to /api/blogs',()=>{
+describe('get-request to /api/blogs',()=>{
     beforeEach(async()=>{
         await Blog.deleteMany({})
         initialBlogs.map(async(item)=>{
@@ -22,18 +22,24 @@ describe('get request to /api/blogs',()=>{
         })
           
     })
-    test('blogs are returned as json',async(done)=>{    
+    test('blogs are returned as json',async()=>{    
         const res = await api
             .get('/api/blogs')
             .expect(200)
             .expect('Content-Type',/application\/json/)    
-        done()    
+            
     })
 
-    test('returns the correct amount of blog post',async(done)=>{
+    test('returns the correct amount of blog post',async()=>{
         const res = await api.get('/api/blogs')        
         expect(res.body).toHaveLength(initialBlogs.length)
-        done()
+       
+    })
+
+    test('the unique property of the blog posts is named id',async()=>{
+        const res = await api.get('/api/blogs')
+        const firstItem = res.body[0]       
+        expect(firstItem.id).toBeDefined()
     })
 })
 

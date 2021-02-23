@@ -44,3 +44,5 @@ SUPERTEST package can be used for writing tests for testing API
 cant update npm on Mac with missing access error --> this may help https://flaviocopes.com/npm-fix-missing-write-access-error/
 to test Mongoose with Jest, need to create a jest.config.js file and define the test env.can be found here: https://mongoosejs.com/docs/jest.html
 4.8 - 6h
+4.9 - 30mins
+
