@@ -10,7 +10,7 @@ backend structure
 
 initialise a default ESlint: node_modules/.bin/eslint --init
 to watch test use command line: npm run test -- --watch
-to run a single test, run this command line: npm test -- -t 'when list has only one blog, equals the likes of that'
+run a single test, use this command line: npm test -- -t 'when list has only one blog, equals the likes of that' or npm test -- tests/note_api.test.js
 
 
 4.3 to 4.4 - 60mins
@@ -33,3 +33,14 @@ misunderstood the argument - so need to fix the function mostBlog - took additio
 //==============//
 really hard to re-structure the data.
 learned how powerful reduce method is --> however still not 100% confident using it T_T
+
+4.8 to 4.12 - 
+//=============//
+for backend testing, can use mocking database library from : https://github.com/williamkapke/mongo-mock
+runInBand option in test script in package.json : to prevent Jest from running tests in parallel
+specified the mode of application in the script may not work in Windows. by installing cross-env package and update script, issue is solved
+test env should use different database from live env
+SUPERTEST package can be used for writing tests for testing API
+cant update npm on Mac with missing access error --> this may help https://flaviocopes.com/npm-fix-missing-write-access-error/
+to test Mongoose with Jest, need to create a jest.config.js file and define the test env.can be found here: https://mongoosejs.com/docs/jest.html
+4.8 - 6h
