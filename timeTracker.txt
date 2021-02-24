@@ -45,4 +45,6 @@ cant update npm on Mac with missing access error --> this may help https://flavi
 to test Mongoose with Jest, need to create a jest.config.js file and define the test env.can be found here: https://mongoosejs.com/docs/jest.html
 4.8 - 6h
 4.9 - 30mins
+DeprecationWarning: Listening to events on the Db class has been deprecated and will be removed in the next major version -> down grade mongoose by running npm i mongoose@5.11.15
+Testing api which is connected to database, better to call the connect method in the test before the test -> works more consistent 
 

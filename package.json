@@ -7,7 +7,7 @@
     "start": "cross-env NODE_ENV=production node index.js",
     "dev": "cross-env NODE_ENV=development nodemon index.js",
     "lint": "eslint",
-    "test": "cross-env NODE_ENV=test jest --verbose --detectOpenHandles --testTimeout=10000",
+    "test": "cross-env NODE_ENV=test jest --verbose --runInBand --testTimeout=20000",
     "test_watch": "cross-env NODE_ENV=test jest --verbose --watch --runInBand"
   },
   "jest": {
@@ -28,7 +28,7 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "http": "0.0.1-security",
-    "mongoose": "^5.11.17"
+    "mongoose": "^5.11.15"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",

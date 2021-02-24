@@ -5,23 +5,24 @@ const app = require('../app')
 const api = supertest(app)
 
 const Blog = require('../models/Blog')
-
+const testHelper = require('./test_helper')
 const initialBlogs = require('./blogs_data')
 
-// beforeAll(async (done) => {
-//   const url = process.env.TEST_MONGODB_URL
-//   await mongoose.connect(url, { useNewUrlParser: true })
-//   done()
-// })
+beforeAll(async (done) => {
+  const url = process.env.TEST_MONGODB_URL
+  await mongoose.connect(url, { useNewUrlParser: true })
+  done()
+})
+
 describe('get-request to /api/blogs',()=>{
     beforeEach(async()=>{
         await Blog.deleteMany({})
-        initialBlogs.map(async(item)=>{
-            const newBlogObj = new Blog(item)
-            await newBlogObj.save()
-        })
-          
+               
+        const blogObjs = testHelper.initialBlogs.map(blog=> new Blog(blog)) 
+        const promiseArr = blogObjs.map(blog=>blog.save())
+        await Promise.all(promiseArr)
     })
+
     test('blogs are returned as json',async()=>{    
         const res = await api
             .get('/api/blogs')
@@ -32,7 +33,7 @@ describe('get-request to /api/blogs',()=>{
 
     test('returns the correct amount of blog post',async()=>{
         const res = await api.get('/api/blogs')        
-        expect(res.body).toHaveLength(initialBlogs.length)
+        expect(res.body).toHaveLength(testHelper.initialBlogs.length)
        
     })
 
