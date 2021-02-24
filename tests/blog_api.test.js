@@ -53,9 +53,9 @@ describe('testing post request to /api/blogs',()=>{
     })
    
    describe('addition of a new blog',()=>{
-       test('failed to add if title or author or both is missing',async(done)=>{         
+       test('failed to add if title or url is missing',async(done)=>{         
            const newPost ={
-                url: "https://londonking.com/"
+                author: "Thao Truong"
            }
            await api.post('/api/blogs').send(newPost).expect(400)
            done()
