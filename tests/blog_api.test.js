@@ -14,7 +14,7 @@ beforeAll(async (done) => {
   done()
 })
 
-describe('get-request to /api/blogs',()=>{
+describe('testing get request to /api/blogs',()=>{
     beforeEach(async()=>{
         await Blog.deleteMany({})
                
@@ -44,6 +44,68 @@ describe('get-request to /api/blogs',()=>{
     })
 })
 
+describe('testing post request to /api/blogs',()=>{
+    beforeEach(async()=>{
+        await Blog.deleteMany({})               
+        const blogObjs = testHelper.initialBlogs.map(blog=> new Blog(blog)) 
+        const promiseArr = blogObjs.map(blog=>blog.save())
+        await Promise.all(promiseArr)
+    })
+   
+   describe('addition of a new blog',()=>{
+       test('failed to add if title or author or both is missing',async(done)=>{         
+           const newPost ={
+                url: "https://londonking.com/"
+           }
+           await api.post('/api/blogs').send(newPost).expect(400)
+           done()
+
+       })
+
+        test('get success status if title, author and url are valid',async(done)=>{
+            await api
+            .post('/api/blogs')
+            .send(testHelper.newValidPost)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
+            done()
+        })
+
+       describe('when adding status is successful',()=>{
+            let blogsInDb
+            beforeAll(async(done)=>{
+                await Blog.deleteMany({})         //drop old data  
+                const newDataSet = [...testHelper.initialBlogs, testHelper.newValidPost]     
+                const blogObjs = newDataSet.map(blog=> new Blog(blog)) 
+                const promiseArr = blogObjs.map(blog=>blog.save())
+                await Promise.all(promiseArr) //seed data
+                blogsInDb = await testHelper.blogsInDb() //get all data
+                done()
+            })
+           
+            test('increase the total number of blogs in the system by one if successful',()=>{
+                
+                expect(blogsInDb.length).toBe(testHelper.initialBlogs.length+1)
+                
+            }) 
+            
+            test('correct blog content is saved to database',()=>{               
+                const blogTitles = blogsInDb.map(blog=>blog.title)
+                expect(blogTitles).toContain('This is new post')
+               
+            })
+
+            test('likes for new post will initially be 0',()=>{
+                const newAddedPost = blogsInDb.filter(blog=>blog.title==='This is new post')[0]
+                expect(newAddedPost.likes).toBe(0)
+            })
+       })
+       
+       
+      
+      
+   })
+})
 
 // test('a valid blog can be added',async()=>{
 //     const newBlog={
