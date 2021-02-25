@@ -2,7 +2,7 @@ POST http://localhost:3003/api/blogs
 content-type: application/json
 
 {
-  "title": "First Post",
+  "title": "Delete Post",
   "author": "Thao",
   "url": "https://abc.com",
   "likes": 3

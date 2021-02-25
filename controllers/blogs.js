@@ -1,19 +1,35 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/Blog')
-
+const logger = require('../utils/logger')
+/*
+path: /api/blogs
+ */
 blogsRouter.get('/', async(request, response) => {
   const blogs = await Blog.find({})   
   // console.log('blogs',blogs)
-  response.json(blogs.map(blog=>blog.toJSON()))
+  response.status(200).json(blogs.map(blog=>blog.toJSON()))
     
 })
 
-blogsRouter.post('/', async(request, response,next) => {  
+blogsRouter.post('/', async(request, response) => {  
   const blog = new Blog(request.body)
   const result = await blog.save()
  
   response.status(201).json(result)
-    //catch(error=>next(error))
+   
+})
+
+blogsRouter.delete('/:id',async(request,response)=>{
+ 
+  const result = await Blog.findByIdAndRemove(request.params.id,(err,doc)=>{
+    if(doc){
+      response.status(204).end()
+    }else{
+       response.status(400).end()
+    }
+  })
+ 
+  
 })
 
 module.exports = blogsRouter
