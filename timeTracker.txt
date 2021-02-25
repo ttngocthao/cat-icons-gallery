@@ -49,3 +49,5 @@ DeprecationWarning: Listening to events on the Db class has been deprecated and 
 Testing api which is connected to database, better to call the connect method in the test before the test -> works more consistent 
 Use express-async-errors to handle errors in async functions
 4.10 to 4.12 -  3h
+4.13 - 3h somehow the express-async-errors does not catch errors when call delete request with invalid id :(
+    
