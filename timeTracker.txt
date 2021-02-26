@@ -50,4 +50,4 @@ Testing api which is connected to database, better to call the connect method in
 Use express-async-errors to handle errors in async functions
 4.10 to 4.12 -  3h
 4.13 - 3h somehow the express-async-errors does not catch errors when call delete request with invalid id :(
-    
+4.14 - 1.5h completed what was asked + plus the route to get a single post and its test

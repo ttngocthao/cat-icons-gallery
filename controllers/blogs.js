@@ -42,4 +42,22 @@ blogsRouter.delete('/:id',async(request,response)=>{
   
 })
 
+blogsRouter.put('/:id',async(request,response)=>{
+  const mongooseOpt = {runValidators: true, new: true}
+  const blog = {
+    title: request.body.title,
+    url: request.body.url,
+    likes: request.body.likes,
+    author: request.body.author
+  }
+  const res = await Blog.findByIdAndUpdate(request.params.id,{...request.body},mongooseOpt,(err,doc)=>{
+    if(doc){
+      response.status(200).json(doc)
+    }else{
+      response.status(400).end()
+    }
+  })
+  
+})
+
 module.exports = blogsRouter
