@@ -133,13 +133,34 @@ describe('clear test data and seed data before testing api', ()=>{
         })
     })
 
-    describe('testing update a post',()=>{
-        test('only update one field - ex: likes',()=>{
-
+    describe('testing update a post request to api/blogs/:id',()=>{
+        let blogsAtStart, updateItemId;
+        beforeEach(async()=>{
+            blogsAtStart = await testHelper.blogsInDb()
+            updateItemId = blogsAtStart[0].id
+        })
+        test('returns 200 status and json if id is valid',async(done)=>{
+            await api.put(`/api/blogs/${updateItemId}`).expect(200).expect('Content-Type', /application\/json/)
+            done()
+        })
+       
+        test('returns 400 status if id is invalid',async()=>{
+            await api.put(`/api/blogs/41224d776a326fb40f000001`).expect(400)
         })
 
-        test('update multiple fields - ex: title & url',()=>{
+        test('returns correct updated item when updates one field if id is valid - ex: likes',async(done)=>{           
+            await api.put(`/api/blogs/${updateItemId}`).send({likes: 20})
+            const blogsAtEnd = await testHelper.blogsInDb()
+            expect(blogsAtEnd[0].likes).toBe(20)
+            done()
+        })
 
+        test('update multiple fields - ex: title & url',async(done)=>{
+            await api.put(`/api/blogs/${updateItemId}`).send({title:'This title has been updated',url:'https://updated_url.com'})
+            const blogsAtEnd = await testHelper.blogsInDb()
+            expect(blogsAtEnd[0].title).toBe('This title has been updated')
+            expect(blogsAtEnd[0].url).toBe('https://updated_url.com')
+            done()
         })
     })
 })
