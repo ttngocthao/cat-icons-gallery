@@ -42,8 +42,25 @@ describe('clear test data and seed data before testing api', ()=>{
             const firstItem = res.body[0]       
             expect(firstItem.id).toBeDefined()
         })
+
+       
     })
       
+    describe('testing a get single post request to /api/blogs/:id',()=>{
+        test('returns correct post if id is valid',async(done)=>{
+            const blogsInDb = await testHelper.blogsInDb()
+            const blogPostId = blogsInDb[0].id
+            const result = await api.get(`/api/blogs/${blogPostId}`)
+            console.log(result)
+            expect(result.body.title).toBe(testHelper.initialBlogs[0].title)
+            done()
+        })
+
+        test('throw 400 error if if id is invalid',async(done)=>{
+            await api.get(`/api/blogs/41224d776a326fb40f000001`).expect(400)
+            done()
+        })
+    })
     
     describe('testing post request to /api/blogs, addition of a new blog',()=>{
         test('failed to add if title or url is missing',async(done)=>{         
@@ -113,6 +130,16 @@ describe('clear test data and seed data before testing api', ()=>{
         test('returns 400 status if id is not valid',async(done)=>{
             await api.delete(`/api/blogs/41224d776a326fb40f000001`).expect(400)
             done()
+        })
+    })
+
+    describe('testing update a post',()=>{
+        test('only update one field - ex: likes',()=>{
+
+        })
+
+        test('update multiple fields - ex: title & url',()=>{
+
         })
     })
 })
