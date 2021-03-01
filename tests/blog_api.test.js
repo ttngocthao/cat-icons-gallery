@@ -1,4 +1,3 @@
-const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 
@@ -9,9 +8,8 @@ const testHelper = require('./test_helper')
 
 
 beforeAll(async (done) => {
-  const url = process.env.TEST_MONGODB_URL
-  await mongoose.connect(url, { useNewUrlParser: true ,useUnifiedTopology: true})
-  done()
+    await testHelper.openConnection2TestDb()
+    done()
 })
 
 describe('clear test data and seed data before testing api', ()=>{
@@ -24,10 +22,6 @@ describe('clear test data and seed data before testing api', ()=>{
     describe('testing get request to /api/blogs',()=>{    
 
         test('blogs are returned as json',async()=>{    
-            const res = await api
-                .get('/api/blogs')
-                .expect(200)
-                .expect('Content-Type',/application\/json/)    
                 
         })
 
@@ -49,9 +43,11 @@ describe('clear test data and seed data before testing api', ()=>{
     describe('testing a get single post request to /api/blogs/:id',()=>{
         test('returns correct post if id is valid',async(done)=>{
             const blogsInDb = await testHelper.blogsInDb()
+            
             const blogPostId = blogsInDb[0].id
+           
             const result = await api.get(`/api/blogs/${blogPostId}`)
-            console.log(result)
+         
             expect(result.body.title).toBe(testHelper.initialBlogs[0].title)
             done()
         })
@@ -90,9 +86,9 @@ describe('clear test data and seed data before testing api', ()=>{
                
 
                 test('increase the total number of blogs in the system by one if successful',async()=>{
-                    console.log('blogsInDb',blogsInDb)
-                    console.log('initialBlogs',testHelper.initialBlogs)
-                    debugger
+                    // console.log('blogsInDb',blogsInDb)
+                    // console.log('initialBlogs',testHelper.initialBlogs)
+                    
                     expect(blogsInDb.length).toBe(testHelper.initialBlogs.length+1)
                     
                 }) 
@@ -155,12 +151,16 @@ describe('clear test data and seed data before testing api', ()=>{
             done()
         })
 
-        test('update multiple fields - ex: title & url',async(done)=>{
+        test('returns correct updated item when update multiple fields - ex: title & url',async(done)=>{
             await api.put(`/api/blogs/${updateItemId}`).send({title:'This title has been updated',url:'https://updated_url.com'})
             const blogsAtEnd = await testHelper.blogsInDb()
             expect(blogsAtEnd[0].title).toBe('This title has been updated')
             expect(blogsAtEnd[0].url).toBe('https://updated_url.com')
             done()
+        })
+
+        test('returns 400 status if leave the required field empty',()=>{
+            
         })
     })
 })
@@ -168,6 +168,6 @@ describe('clear test data and seed data before testing api', ()=>{
 
 
 afterAll(async(done)=>{
-    await mongoose.connection.close()
+    await testHelper.closeConnection2TestDb()
     done()
 })

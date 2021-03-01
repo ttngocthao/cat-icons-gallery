@@ -1,4 +1,13 @@
 const Blog = require('../models/Blog')
+const mongoose = require('mongoose')
+const openConnection2TestDb =async()=>{
+    const url = process.env.TEST_MONGODB_URL
+    await mongoose.connect(url, { useNewUrlParser: true ,useUnifiedTopology: true,useFindAndModify: false, useCreateIndex: true })
+}
+
+const closeConnection2TestDb = async()=>{
+    await mongoose.connection.close()
+}
 
 const initialBlogs =[
     {
@@ -27,5 +36,5 @@ const blogsInDb = async()=>{
 }
 
 module.exports={
-    initialBlogs,newValidPost,blogsInDb
+    initialBlogs,newValidPost,blogsInDb,openConnection2TestDb,closeConnection2TestDb
 }
