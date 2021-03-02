@@ -21,8 +21,12 @@ describe('clear test data and seed data before testing api', ()=>{
     })
     describe('testing get request to /api/blogs',()=>{    
 
-        test('blogs are returned as json',async()=>{    
-                
+        test('blogs are returned as json',async(done)=>{    
+            await api
+            .get('/api/blogs')
+            .expect(200)
+            .expect('Content-Type',/application\/json/) 
+            done()
         })
 
         test('returns the correct amount of blog post',async()=>{
@@ -43,10 +47,10 @@ describe('clear test data and seed data before testing api', ()=>{
     describe('testing a get single post request to /api/blogs/:id',()=>{
         test('returns correct post if id is valid',async(done)=>{
             const blogsInDb = await testHelper.blogsInDb()
-            
-            const blogPostId = blogsInDb[0].id
-           
-            const result = await api.get(`/api/blogs/${blogPostId}`)
+            //console.log('blogsInDb',blogsInDb)
+            const blogPost = blogsInDb.find(post => testHelper.initialBlogs[0].title===post.title)
+            // console.log('blogPost',blogPost)
+            const result = await api.get(`/api/blogs/${blogPost.id}`)
          
             expect(result.body.title).toBe(testHelper.initialBlogs[0].title)
             done()
