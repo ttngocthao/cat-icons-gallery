@@ -8,9 +8,8 @@
     "dev": "cross-env NODE_ENV=development nodemon index.js",
     "lint": "eslint",
     "test": "cross-env NODE_ENV=test jest --verbose --runInBand --testTimeout=20000",
-    "test:api": "npm run test -- tests/blog_api.test.js",
-    "test:api_update": "npm run test -- -t 'testing update a post'",
-    "test:api_singlepost": "npm run test -- -t 'testing a get single post request'",
+    "test:blog_api": "npm run test -- tests/blog_api.test.js",
+    "test:user_api": "npm run test -- tests/user_api.test.js",
     "test_watch": "cross-env NODE_ENV=test jest --verbose --watch --runInBand"
   },
   "jest": {

@@ -1,5 +1,6 @@
 const Blog = require('../models/Blog')
 const mongoose = require('mongoose')
+const User = require('../models/User')
 const openConnection2TestDb =async()=>{
     const url = process.env.TEST_MONGODB_URL
     await mongoose.connect(url, { useNewUrlParser: true ,useUnifiedTopology: true,useFindAndModify: false, useCreateIndex: true })
@@ -24,6 +25,7 @@ const initialBlogs =[
     }
 ]
 
+
 const newValidPost ={
     title: "This is new post",
     author:"London King",
@@ -35,6 +37,17 @@ const blogsInDb = async()=>{
     return blogs.map(blog=>blog.toJSON())
 }
 
+const usersInDb = async()=>{
+    const users = await User.find({})
+    return users.map(user=>user.toJSON())
+}
+
 module.exports={
-    initialBlogs,newValidPost,blogsInDb,openConnection2TestDb,closeConnection2TestDb
+    initialBlogs,
+  
+    newValidPost,
+    blogsInDb,
+    usersInDb,
+    openConnection2TestDb,
+    closeConnection2TestDb
 }
