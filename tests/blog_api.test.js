@@ -15,27 +15,9 @@ beforeAll(async (done) => {
 })
 
 describe('clear test data and seed data before testing api', ()=>{
-    beforeEach(async()=>{
-        await Blog.deleteMany({})   
-        await User.deleteMany({}) 
-        /**
-         * ? create user
-         */       
-        const password = 'This is my password'
-        const passwordHash = await bcrypt.hash(password,10)
-        const user = new User({
-            username:'thaotruong',
-            name:'Thao Truong',
-            email:'thao.truong@mail.com',
-            passwordHash
-        })  
-        const savedUser = await user.save()
-        const blogsWithUser = testHelper.initialBlogs.map(blog=>({...blog,user: savedUser}))
-        const blogObjs = blogsWithUser.map(blog=> new Blog(blog)) 
-        const promiseArr = blogObjs.map(blog=>blog.save())
-       
-       
-        await Promise.all(promiseArr)
+    beforeEach(async(done)=>{
+        await testHelper.seedData()
+        done()
     })
     describe('testing get request to /api/blogs',()=>{    
 

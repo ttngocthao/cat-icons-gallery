@@ -16,19 +16,9 @@ beforeAll(async(done)=>{
     done()
 })
 
-describe('when there is initially one user in db',()=>{
-    
+describe('when there is initially one user in db',()=>{    
     beforeEach(async(done)=>{
-        await User.deleteMany({}) //clear all users database if exist
-        const password = 'This is my password'
-        const passwordHash = await bcrypt.hash(password,10)
-        const user = new User({
-            username:'thaotruong',
-            name:'Thao Truong',
-            email:'thao.truong@mail.com',
-            passwordHash
-        })
-        await user.save()
+        await testHelper.seedData()
         done()
     })
 
@@ -106,6 +96,13 @@ describe('when there is initially one user in db',()=>{
         expect(result.status).toBe(200)
         const usernameList = result.body.map(user=>user.username)
         expect(usernameList).toContain('thaotruong')        
+    })
+
+    test('displays blogs created by each user',async()=>{
+        const result = await api.get('/api/users')
+        const blogs = result.body[0].blogs
+        expect(blogs).toBeDefined()
+        expect(blogs.length).toBe(2)        
     })
 })
 

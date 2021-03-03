@@ -2,7 +2,7 @@ POST http://localhost:3003/api/blogs
 content-type: application/json
 
 {
-  "title": "New post with userObj",
+  "title": "this is the second post from Thao",
   "author": "Thao",
   "url": "https://abc.com",
   "likes": 3,

@@ -33,9 +33,13 @@ blogsRouter.post('/', async(request, response) => {
     throw Error('Title, author and url cannot be empty')
   }
   const blog = new Blog({...body,user: user._id})
-  const result = await blog.save()
+  const savedBlog = await blog.save()
   
-  response.status(201).json(result)
+  //add blog id into blogs property and save the user database
+  user.blogs = [...user.blogs,savedBlog._id]
+  await user.save()
+
+  response.status(201).json(savedBlog)
    
 })
 

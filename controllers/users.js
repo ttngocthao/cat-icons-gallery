@@ -36,8 +36,9 @@ userRouter.post('/',async(req,res)=>{
 
 
 userRouter.get('/',async(req,res)=>{
-    const result = await User.find({})
+    const result = await User.find({}).populate('blogs',{url:1,title:1,author:1})
     if(!result) throw Error('There is no user in the database')
+
     res.status(200).json(result.map(user=>user.toJSON()))
 })
 

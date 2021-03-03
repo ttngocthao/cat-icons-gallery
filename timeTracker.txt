@@ -53,7 +53,7 @@ Use express-async-errors to handle errors in async functions
 4.14 - 1.5h completed what was asked + plus the route to get a single post and its test
 
 4.15 to 4.16 - 3h
-4.17 - 1h
+4.17 - 4h
 
 //================//
 bcrypt package for generating the password hashes
