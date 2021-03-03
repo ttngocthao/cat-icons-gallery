@@ -4,7 +4,20 @@ const bcrypt = require('bcrypt')
 
 
 userRouter.post('/',async(req,res)=>{
+    /**
+     * !check if password are given
+     * !!check if username and password are at least 3 characters long
+     * !!!must give the suitable status codes and error messages
+     */
     const body = req.body
+    if(!body.password) {
+        res.status(400)
+        throw Error('Password cannot be empty')
+    }
+    if(body.password && body.password.length < 3) {
+        res.status(400)
+        throw Error('Password must be at least 3 characters long')
+    }
 
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(body.password,saltRounds)
@@ -23,7 +36,9 @@ userRouter.post('/',async(req,res)=>{
 
 
 userRouter.get('/',async(req,res)=>{
-    return 0
+    const result = await User.find({})
+    if(!result) throw Error('There is no user in the database')
+    res.status(200).json(result.map(user=>user.toJSON()))
 })
 
 module.exports = userRouter

@@ -19,7 +19,7 @@ beforeAll(async(done)=>{
 describe('when there is initially one user in db',()=>{
     
     beforeEach(async(done)=>{
-        await User.deleteMany({}) //clear all data if exist
+        await User.deleteMany({}) //clear all users database if exist
         const password = 'This is my password'
         const passwordHash = await bcrypt.hash(password,10)
         const user = new User({
@@ -31,7 +31,8 @@ describe('when there is initially one user in db',()=>{
         await user.save()
         done()
     })
-    test('creates a user successfully',async()=>{
+
+    test('creates a user successfully if inputs valid',async()=>{
         /**
          * TODO: 1.check database at first
          * TODO: 2.add new a new user
@@ -51,6 +52,60 @@ describe('when there is initially one user in db',()=>{
         const allUsernames = usersInDbAtEnd.map(user=>user.username)
         expect(allUsernames).toContain(newUser.username)
 
+    })
+
+    test('not create a user when username is missing',async()=>{
+        const inValidUser = { 
+            name:'Paul Denman',
+            email:'paul.denman@mail.com',
+            password:'myPasswordHere'}
+        await api.post('/api/users').send(inValidUser).expect(400)
+    })
+
+    test('not create a user when password is missing',async()=>{
+        const inValidUser = { 
+            username:'pauldenman',
+            name:'Paul Denman',
+            email:'paul.denman@mail.com',
+        }
+        await api.post('/api/users').send(inValidUser).expect(400)
+    })
+
+    test('not create a user when username is not unique',async()=>{
+        const newUser = {
+            username:'thaotruong',
+            name:'Paul Denman',
+            email:'paul.denman@mail.com',
+            password:'myPasswordHere'
+        }
+        await api.post('/api/users').send(newUser).expect(400)
+    })
+
+    test('not create a user when username length is less than 3characters',async()=>{
+        const inValidUser = {
+            username:'be',
+            name:'Paul Denman',
+            email:'paul.denman@mail.com',
+            password:'myPasswordHere'
+        }
+        await api.post('/api/users').send(inValidUser).expect(400)
+    })
+
+    test('not create a user when password length is less than 3 characters',async()=>{
+        const inValidUser = {
+            username:'pauldenman',
+            name:'Paul Denman',
+            email:'paul.denman@mail.com',
+            password:'ps'
+        }
+        await api.post('/api/users').send(inValidUser).expect(400)
+    })
+
+    test('returns all users ',async()=>{
+        const result = await api.get('/api/users').expect(200)
+        expect(result.status).toBe(200)
+        const usernameList = result.body.map(user=>user.username)
+        expect(usernameList).toContain('thaotruong')        
     })
 })
 
