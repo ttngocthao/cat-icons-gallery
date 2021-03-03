@@ -1,11 +1,11 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/Blog')
-
+const User = require('../models/User')
 /*
 path: /api/blogs
  */
 blogsRouter.get('/', async(request, response) => {
-  const blogs = await Blog.find({})   
+  const blogs = await Blog.find({}).populate('user',{username:1,name:1})   
   // console.log('blogs',blogs)
   response.status(200).json(blogs.map(blog=>blog.toJSON()))
     
@@ -21,10 +21,20 @@ blogsRouter.get('/:id',async(request,response)=>{
   })
 })
 
-blogsRouter.post('/', async(request, response) => {  
-  const blog = new Blog(request.body)
+blogsRouter.post('/', async(request, response) => { 
+  const body = request.body
+  const user = await User.findById(body.userId)
+  if(!user){
+    response.status(400)
+    throw Error('User cannot be found')
+  }
+  if(!body.title || !body.author || !body.url){
+    response.status(400)
+    throw Error('Title, author and url cannot be empty')
+  }
+  const blog = new Blog({...body,user: user._id})
   const result = await blog.save()
- 
+  
   response.status(201).json(result)
    
 })

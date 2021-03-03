@@ -1,9 +1,11 @@
 const supertest = require('supertest')
+const bcrypt = require('bcrypt')
 const app = require('../app')
 
 const api = supertest(app)
 
 const Blog = require('../models/Blog')
+const User = require('../models/User')
 const testHelper = require('./test_helper')
 
 
@@ -14,9 +16,25 @@ beforeAll(async (done) => {
 
 describe('clear test data and seed data before testing api', ()=>{
     beforeEach(async()=>{
-        await Blog.deleteMany({})               
-        const blogObjs = testHelper.initialBlogs.map(blog=> new Blog(blog)) 
+        await Blog.deleteMany({})   
+        await User.deleteMany({}) 
+        /**
+         * ? create user
+         */       
+        const password = 'This is my password'
+        const passwordHash = await bcrypt.hash(password,10)
+        const user = new User({
+            username:'thaotruong',
+            name:'Thao Truong',
+            email:'thao.truong@mail.com',
+            passwordHash
+        })  
+        const savedUser = await user.save()
+        const blogsWithUser = testHelper.initialBlogs.map(blog=>({...blog,user: savedUser}))
+        const blogObjs = blogsWithUser.map(blog=> new Blog(blog)) 
         const promiseArr = blogObjs.map(blog=>blog.save())
+       
+       
         await Promise.all(promiseArr)
     })
     describe('testing get request to /api/blogs',()=>{    
@@ -41,6 +59,12 @@ describe('clear test data and seed data before testing api', ()=>{
             expect(firstItem.id).toBeDefined()
         })
 
+        test('returned blogs need to have user property',async()=>{
+            const res = await api.get('/api/blogs')
+            const firstItem = res.body[0]
+            expect(firstItem.user).toBeDefined()
+            expect(firstItem.user.username).toBe('thaotruong')
+        })
        
     })
       
@@ -72,10 +96,18 @@ describe('clear test data and seed data before testing api', ()=>{
 
         })
 
-        test('get success status if title, author and url are valid',async(done)=>{
+        test('get success status if title, author and url are valid',async(done)=>{            
+            const user = await testHelper.usersInDb()
+            const userId = user[0].id
+            const newValidPost ={
+                title: "This is new post",
+                author:"London King",
+                url: "https://londonking.com/",
+                userId
+            }
             await api
             .post('/api/blogs')
-            .send(testHelper.newValidPost)
+            .send(newValidPost)
             .expect(201)
             .expect('Content-Type', /application\/json/)
             done()
@@ -107,6 +139,8 @@ describe('clear test data and seed data before testing api', ()=>{
                     const newAddedPost = blogsInDb.filter(blog=>blog.title==='This is new post')[0]
                     expect(newAddedPost.likes).toBe(0)
                 })
+
+                
         })
         
         

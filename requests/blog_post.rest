@@ -2,8 +2,9 @@ POST http://localhost:3003/api/blogs
 content-type: application/json
 
 {
-  "title": "Delete Post",
+  "title": "New post with userObj",
   "author": "Thao",
   "url": "https://abc.com",
-  "likes": 3
+  "likes": 3,
+  "userId":"603f7f28e0fc19146e6080b7"
 }
