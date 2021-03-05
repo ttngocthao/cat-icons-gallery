@@ -16,7 +16,7 @@ beforeAll(async(done)=>{
     done()
 })
 
-describe('when there is initially one user in db',()=>{    
+describe('when there is initially 2 users in db',()=>{    
     beforeEach(async(done)=>{
         await testHelper.seedData()
         done()
@@ -31,9 +31,9 @@ describe('when there is initially one user in db',()=>{
         */
         const usersInDbAtStart = await testHelper.usersInDb()
         const newUser = {
-            username:'pauldenman',
-            name:'Paul Denman',
-            email:'paul.denman@mail.com',
+            username:'newUser',
+            name:'New User',
+            email:'newUser@mail.com',
             password:'myPasswordHere'
         }
         await api.post('/api/users').send(newUser).expect(201).expect('Content-Type',/application\/json/) 
@@ -54,7 +54,7 @@ describe('when there is initially one user in db',()=>{
 
     test('not create a user when password is missing',async()=>{
         const inValidUser = { 
-            username:'pauldenman',
+            username:'inValidUsername',
             name:'Paul Denman',
             email:'paul.denman@mail.com',
         }
@@ -91,11 +91,12 @@ describe('when there is initially one user in db',()=>{
         await api.post('/api/users').send(inValidUser).expect(400)
     })
 
-    test('returns all users ',async()=>{
+    test('returns all users',async()=>{
         const result = await api.get('/api/users').expect(200)
         expect(result.status).toBe(200)
         const usernameList = result.body.map(user=>user.username)
-        expect(usernameList).toContain('thaotruong')        
+        expect(usernameList).toContain('thaotruong')  //thaotruong user exists
+        expect(usernameList.length).toBeGreaterThan(1)   //there are more than one users in the database   
     })
 
     test('displays blogs created by each user',async()=>{

@@ -10,6 +10,7 @@
     "test": "cross-env NODE_ENV=test jest --verbose --runInBand --testTimeout=20000",
     "test:blog_api": "npm run test -- tests/blog_api.test.js",
     "test:user_api": "npm run test -- tests/user_api.test.js",
+    "test:login_api": "npm run test -- tests/login_api.test.js",
     "test_watch": "cross-env NODE_ENV=test jest --verbose --watch --runInBand"
   },
   "jest": {

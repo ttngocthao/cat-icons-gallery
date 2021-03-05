@@ -57,3 +57,4 @@ Use express-async-errors to handle errors in async functions
 
 //================//
 bcrypt package for generating the password hashes
+EXPRESS-JWT: If the application has multiple interfaces requiring identification, JWT's validation should be separated into its own middleware, library like EXPRESS-JWT could also be used.

@@ -14,9 +14,9 @@ loginRouter.post('/',async(req,res)=>{
     const user =await User.findOne({username:body.username})
     const passwordCorrect = user===null ? false : await bcrypt.compare(body.password,user.passwordHash)
 
-    if(!(user && passwordCorrect)){
-        res.status(401)
-        throw Error('Invalid username or password')
+    if(!user || !passwordCorrect){
+        return res.status(401).json({error:'invalid username or password'})
+        //throw Error('Invalid username or password')
     }
 
     //use username and id info to generate token

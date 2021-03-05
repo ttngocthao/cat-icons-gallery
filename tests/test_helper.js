@@ -25,6 +25,7 @@ const initialBlogs =[
 		likes: 5,
     }
 ]
+
 const blogsInDb = async()=>{
     const blogs = await Blog.find({})
     return blogs.map(blog=>blog.toJSON())
@@ -71,7 +72,24 @@ const seedData =async()=>{
     newUser.blogs = [...newUser.blogs,secondPost._id]
     await newUser.save()
 
-    // const allUsersFromDb = await User.find({})
+    /**
+     * !Add a second user to the database 
+    */
+    const secondUser ={
+        username:'paulDenman',
+        name: 'Paul Denman',
+        email:'paul@hotmail.com',
+        password:'This is Paul password'
+    }
+    const secondUserInfo = new User({
+        username:secondUser.username,
+        name: secondUser.name,
+        email:secondUser.email,
+        passwordHash: await bcrypt.hash(secondUser.password,10)
+    })
+    await secondUserInfo.save()
+    //* End add a second user
+
     // console.log(allUsersFromDb)
 }
 
