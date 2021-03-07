@@ -1,6 +1,16 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/Blog')
 const User = require('../models/User')
+const jwt = require('jsonwebtoken')
+const getTokenFromAuthorizationHeader =(request)=>{
+  const authorization = request.get('authorization')
+  if(authorization && authorization.toLowerCase().startsWith('bearer ')){
+    return authorization.substring(7) //returns the token string without the word 'bearer '
+  }
+  return null
+}
+
+
 /*
 path: /api/blogs
  */
@@ -21,16 +31,34 @@ blogsRouter.get('/:id',async(request,response)=>{
   })
 })
 
+/**
+ * Private
+ */
 blogsRouter.post('/', async(request, response) => { 
+  const token = getTokenFromAuthorizationHeader(request)
+  /**
+   *? Decode token to get the id 
+   *? (as we sign the token with username and id)
+   *? (check /controllers/login to see which properties was signed to the token if needed)
+  **/
+  const decodedToken = jwt.verify(token,process.env.TOKEN_SECRET)
+  console.log('token',token)
+  console.log('decodedToken',decodedToken)
+  
+  if(!token || !decodedToken.id){
+    return response.status(401).json({error: 'Token is missing or invalid'})
+  }
+
   const body = request.body
-  const user = await User.findById(body.userId)
+  const user = await User.findById(decodedToken.id)
+  
   if(!user){
-    response.status(400)
-    throw Error('User cannot be found')
+    return response.status(400)
+    //throw Error('User cannot be found')
   }
   if(!body.title || !body.author || !body.url){
-    response.status(400)
-    throw Error('Title, author and url cannot be empty')
+    return response.status(400)
+    //throw Error('Title, author and url cannot be empty')
   }
   const blog = new Blog({...body,user: user._id})
   const savedBlog = await blog.save()

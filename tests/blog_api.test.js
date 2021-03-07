@@ -1,5 +1,6 @@
 const supertest = require('supertest')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 const app = require('../app')
 
 const api = supertest(app)
@@ -8,6 +9,16 @@ const Blog = require('../models/Blog')
 const User = require('../models/User')
 const testHelper = require('./test_helper')
 
+const loginAsThao =async()=>{
+
+    const thaoUser ={
+        username:'thaotruong',
+        password: 'This is my password'
+    }
+    const res = await api.post('/api/login').send(thaoUser)
+
+    return {...res,token:res.body.token}
+}
 
 beforeAll(async (done) => {
     await testHelper.openConnection2TestDb()
@@ -15,9 +26,20 @@ beforeAll(async (done) => {
 })
 
 describe('clear test data and seed data before testing api', ()=>{
+    let token = null
     beforeEach(async(done)=>{
         await testHelper.seedData()
+        // const firstPromise = testHelper.seedData()
+        // const secondPromise = loginAsThao()
+        // const promiseArr = [firstPromise,secondPromise]
+        // const res = await Promise.all(promiseArr)
+        // console.log('res',res)
+        // if(res.token){
+        //     token = res.token
+        // }
+        
         done()
+      
     })
     describe('testing get request to /api/blogs',()=>{    
 
@@ -29,23 +51,25 @@ describe('clear test data and seed data before testing api', ()=>{
             done()
         })
 
-        test('returns the correct amount of blog post',async()=>{
+        test('returns the correct amount of blog post',async(done)=>{
             const res = await api.get('/api/blogs')        
             expect(res.body).toHaveLength(testHelper.initialBlogs.length)
-        
+            done()
         })
 
-        test('the unique property of the blog posts is named id',async()=>{
+        test('the unique property of the blog posts is named id',async(done)=>{
             const res = await api.get('/api/blogs')
             const firstItem = res.body[0]       
             expect(firstItem.id).toBeDefined()
+            done()
         })
 
-        test('returned blogs need to have user property',async()=>{
+        test('returned blogs need to have user property',async(done)=>{
             const res = await api.get('/api/blogs')
             const firstItem = res.body[0]
             expect(firstItem.user).toBeDefined()
             expect(firstItem.user.username).toBe('thaotruong')
+            done()
         })
        
     })
@@ -68,17 +92,45 @@ describe('clear test data and seed data before testing api', ()=>{
         })
     })
     
-    describe('testing post request to /api/blogs, addition of a new blog',()=>{
-        test('failed to add if title or url is missing',async(done)=>{         
-            const newPost ={
-                author: "Thao Truong"
+    describe('testing post request to /api/blogs, addition of a new blog',()=>{       
+        
+        test('failed to add if title or url is missing',()=>{    
+
+            const thaoUser ={
+            username:'thaotruong',
+            password: 'This is my password'
             }
-            await api.post('/api/blogs').send(newPost).expect(400)
-            done()
+
+            api.post('/api/login').send(thaoUser).then(res=>{
+                if(res.body.token){
+                    token = res.body.token
+                    console.log('token',token)
+                }
+            }).then(()=>{
+                const newPost ={
+                author: "Thao Truong"
+                }
+                api.post('/api/blogs').send(newPost).set('Authorization','Bearer ' + token).then(res=>res)
+            }).then(result=> {
+                
+                expect(result.status).toBe(400)
+            })
+            
+          
+           
+            
+           
+           
 
         })
 
-        test('get success status if title, author and url are valid',async(done)=>{            
+        test('get success status if title, author and url are valid',async(done)=>{  
+            
+            const login = await loginAsThao()
+            if(login.token){
+                token = login.token
+            }
+           
             const user = await testHelper.usersInDb()
             const userId = user[0].id
             const newValidPost ={
@@ -89,7 +141,7 @@ describe('clear test data and seed data before testing api', ()=>{
             }
             await api
             .post('/api/blogs')
-            .send(newValidPost)
+            .send(newValidPost).set('Authorization','Bearer ' + token)
             .expect(201)
             .expect('Content-Type', /application\/json/)
             done()
@@ -151,17 +203,19 @@ describe('clear test data and seed data before testing api', ()=>{
 
     describe('testing update a post request to api/blogs/:id',()=>{
         let blogsAtStart, updateItemId;
-        beforeEach(async()=>{
+        beforeEach(async(done)=>{
             blogsAtStart = await testHelper.blogsInDb()
             updateItemId = blogsAtStart[0].id
+            done()
         })
         test('returns 200 status and json if id is valid',async(done)=>{
             await api.put(`/api/blogs/${updateItemId}`).expect(200).expect('Content-Type', /application\/json/)
             done()
         })
        
-        test('returns 400 status if id is invalid',async()=>{
+        test('returns 400 status if id is invalid',async(done)=>{
             await api.put(`/api/blogs/41224d776a326fb40f000001`).expect(400)
+            done()
         })
 
         test('returns correct updated item when updates one field if id is valid - ex: likes',async(done)=>{           
@@ -179,9 +233,7 @@ describe('clear test data and seed data before testing api', ()=>{
             done()
         })
 
-        test('returns 400 status if leave the required field empty',()=>{
-            
-        })
+        
     })
 })
 
