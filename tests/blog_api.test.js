@@ -11,10 +11,10 @@ const testHelper = require('./test_helper')
 
 const loginAsThao =async()=>{
     try {
-         const thaoUser ={
+        const thaoUser ={
         username:'thaotruong',
         password: 'This is my password'
-    }
+            }
         const res = await api.post('/api/login').send(thaoUser)
 
         return res.body.token ? res.body.token : null
@@ -23,7 +23,21 @@ const loginAsThao =async()=>{
     }
    
 }
-
+const loginAsSomeOne = async(user)=>{
+    try{
+        /**
+         * !USER OBJECT NEEDS FOR EXAMPLE:
+         * const thaoUser ={
+            username:'thaotruong',
+            password: 'This is my password'
+                }
+         */
+        const res = await api.post('/api/login').send(user)
+        return res.body.token ? res.body.token : null
+    }catch (error){
+        console.log(error)
+    }
+}
 beforeAll(async (done) => {
  
     await testHelper.openConnection2TestDb()   
@@ -98,17 +112,31 @@ describe('clear test data and seed data before testing api', ()=>{
         test('returns the amount of blog 1 less and the title of that post could not find if id is valid',async(done)=>{
             const blogsAtStart = await testHelper.blogsInDb()
             const postToDelete = blogsAtStart[0]
-            await api.delete(`/api/blogs/${postToDelete.id}`)
+            await api.delete(`/api/blogs/${postToDelete.id}`).set('Authorization','Bearer ' + token)
             const blogsAtEnd = await testHelper.blogsInDb()
             expect(blogsAtEnd.length).toBe(testHelper.initialBlogs.length-1)
             const titles = blogsAtEnd.map(blog=>blog.title)
             expect(titles).not.toContain(postToDelete.title)
             done()
         })
+
         test('returns 400 status if id is not valid',async(done)=>{
-            await api.delete(`/api/blogs/41224d776a326fb40f000001`).expect(400)
+            await api.delete(`/api/blogs/41224d776a326fb40f000001`).set('Authorization','Bearer ' + token).expect(400)
             done()
         })
+
+        test('returns 401 if it is not the blog creator',async(done)=>{
+            const paulUser ={
+                username:'paulDenman',
+                password:'This is Paul password'
+            }
+            const token = await loginAsSomeOne(paulUser)
+            const blogsAtStart = await testHelper.blogsInDb()
+            const postToDelete = blogsAtStart[0]
+            await api.delete(`/api/blogs/${postToDelete.id}`).set('Authorization','Bearer ' + token).expect(401)
+            done()
+        })
+
     })
 
     describe('testing update a post request to api/blogs/:id',()=>{

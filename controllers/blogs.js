@@ -2,6 +2,7 @@ const blogsRouter = require('express').Router()
 const Blog = require('../models/Blog')
 const User = require('../models/User')
 const jwt = require('jsonwebtoken')
+const { json } = require('express')
 
 
 /*
@@ -93,18 +94,12 @@ blogsRouter.delete('/:id',async(request,response)=>{
     return response.status(401).json({error:'No Authorization to delete the blog'})
   }
   const result = await blog.deleteOne()
-  console.log('result',result)
+ // console.log('result',result)
   
-  return response.status(204).json({msg: 'blog is successfully deleted'})
+  return response.status(204).json({msg: 'blog is successfully deleted',blog: result.toJSON()})
  
  
-  // const result = await Blog.findByIdAndRemove(request.params.id,(err,doc)=>{
-  //   if(doc){
-  //     response.status(204).end()
-  //   }else{
-  //      response.status(400).end()
-  //   }
-  // })
+ 
  
   
 })
