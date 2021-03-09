@@ -1,9 +1,15 @@
 POST http://localhost:3003/api/users
 content-type: application/json
 
+# {
+#     "username":"thaotruong",
+#     "name":"Thao Truong",
+#     "email":"thao.truong@mail.com",
+#     "password":"mypassword"
+# }
 {
-    "username":"thaotruong",
-    "name":"Thao Truong",
-    "email":"thao.truong@mail.com",
+    "username":"pauldenman",
+    "name":"Paul Denman",
+    "email":"paul.denman@mail.com",
     "password":"mypassword"
 }
