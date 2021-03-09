@@ -10,37 +10,38 @@ const User = require('../models/User')
 const testHelper = require('./test_helper')
 
 const loginAsThao =async()=>{
-
-    const thaoUser ={
+    try {
+         const thaoUser ={
         username:'thaotruong',
         password: 'This is my password'
     }
-    const res = await api.post('/api/login').send(thaoUser)
+        const res = await api.post('/api/login').send(thaoUser)
 
-    return {...res,token:res.body.token}
+        return res.body.token ? res.body.token : null
+    } catch (error) {
+        console.log(error)
+    }
+   
 }
 
 beforeAll(async (done) => {
-    await testHelper.openConnection2TestDb()
+ 
+    await testHelper.openConnection2TestDb()   
+  
     done()
 })
 
 describe('clear test data and seed data before testing api', ()=>{
-    let token = null
+        let token
     beforeEach(async(done)=>{
-        await testHelper.seedData()
-        // const firstPromise = testHelper.seedData()
-        // const secondPromise = loginAsThao()
-        // const promiseArr = [firstPromise,secondPromise]
-        // const res = await Promise.all(promiseArr)
-        // console.log('res',res)
-        // if(res.token){
-        //     token = res.token
-        // }
-        
-        done()
       
+        await testHelper.seedData()  
+        token = await loginAsThao()       
+       
+        done()
+        
     })
+    
     describe('testing get request to /api/blogs',()=>{    
 
         test('blogs are returned as json',async(done)=>{    
@@ -77,9 +78,9 @@ describe('clear test data and seed data before testing api', ()=>{
     describe('testing a get single post request to /api/blogs/:id',()=>{
         test('returns correct post if id is valid',async(done)=>{
             const blogsInDb = await testHelper.blogsInDb()
-            //console.log('blogsInDb',blogsInDb)
+            
             const blogPost = blogsInDb.find(post => testHelper.initialBlogs[0].title===post.title)
-            // console.log('blogPost',blogPost)
+           
             const result = await api.get(`/api/blogs/${blogPost.id}`)
          
             expect(result.body.title).toBe(testHelper.initialBlogs[0].title)
@@ -90,98 +91,7 @@ describe('clear test data and seed data before testing api', ()=>{
             await api.get(`/api/blogs/41224d776a326fb40f000001`).expect(400)
             done()
         })
-    })
-    
-    describe('testing post request to /api/blogs, addition of a new blog',()=>{       
-        
-        test('failed to add if title or url is missing',()=>{    
-
-            const thaoUser ={
-            username:'thaotruong',
-            password: 'This is my password'
-            }
-
-            api.post('/api/login').send(thaoUser).then(res=>{
-                if(res.body.token){
-                    token = res.body.token
-                    console.log('token',token)
-                }
-            }).then(()=>{
-                const newPost ={
-                author: "Thao Truong"
-                }
-                api.post('/api/blogs').send(newPost).set('Authorization','Bearer ' + token).then(res=>res)
-            }).then(result=> {
-                
-                expect(result.status).toBe(400)
-            })
-            
-          
-           
-            
-           
-           
-
-        })
-
-        test('get success status if title, author and url are valid',async(done)=>{  
-            
-            const login = await loginAsThao()
-            if(login.token){
-                token = login.token
-            }
-           
-            const user = await testHelper.usersInDb()
-            const userId = user[0].id
-            const newValidPost ={
-                title: "This is new post",
-                author:"London King",
-                url: "https://londonking.com/",
-                userId
-            }
-            await api
-            .post('/api/blogs')
-            .send(newValidPost).set('Authorization','Bearer ' + token)
-            .expect(201)
-            .expect('Content-Type', /application\/json/)
-            done()
-        })
-
-        describe('when adding status is successful',()=>{
-                let blogsInDb
-                beforeAll(async(done)=>{
-                    blogsInDb = await testHelper.blogsInDb() //get all data
-                    done()
-                })
-               
-
-                test('increase the total number of blogs in the system by one if successful',async()=>{
-                    // console.log('blogsInDb',blogsInDb)
-                    // console.log('initialBlogs',testHelper.initialBlogs)
-                    
-                    expect(blogsInDb.length).toBe(testHelper.initialBlogs.length+1)
-                    
-                }) 
-                
-                test('correct blog content is saved to database',()=>{               
-                    const blogTitles = blogsInDb.map(blog=>blog.title)
-                    expect(blogTitles).toContain('This is new post')
-                
-                })
-
-                test('likes for new post will initially be 0',()=>{
-                    const newAddedPost = blogsInDb.filter(blog=>blog.title==='This is new post')[0]
-                    expect(newAddedPost.likes).toBe(0)
-                })
-
-                
-        })
-        
-        
-        
-        
-    })
-   
+    })   
 
     describe('testing delete a post',()=>{
         
@@ -209,6 +119,9 @@ describe('clear test data and seed data before testing api', ()=>{
             done()
         })
         test('returns 200 status and json if id is valid',async(done)=>{
+            blogsAtStart = await testHelper.blogsInDb()
+          
+            updateItemId = blogsAtStart[0].id
             await api.put(`/api/blogs/${updateItemId}`).expect(200).expect('Content-Type', /application\/json/)
             done()
         })
@@ -235,11 +148,176 @@ describe('clear test data and seed data before testing api', ()=>{
 
         
     })
+
+    describe('testing post request to /api/blogs, addition of a new blog',()=>{
+        let blogsInDb
+
+        test('failed to add if title or url is missing',()=>{
+            const newPost ={  author: "Thao Truong" }
+            if(token){
+                api
+                .post('/api/blogs')
+                .send(newPost)
+                .set('Authorization','Bearer ' + token)
+                .expect(400)
+                .end((err,res)=>{
+                    if(err) throw err
+                })
+            }
+               
+           
+           
+        })
+
+        // test('failed to add if title or url is missing',async(done)=>{
+        //     const newPost ={  author: "Thao Truong" }
+        //     await api.post('/api/blogs').send(newPost).set('Authorization','Bearer ' + token).expect(400)
+           
+        //     done()
+        // })
+
+        test('get success status if title, author and url are valid',async(done)=>{           
+            const user = await testHelper.usersInDb()
+         
+            const userId = user[0].id
+            const newValidPost ={
+                title: "This is new post",
+                author:"London King",
+                url: "https://londonking.com/",
+                userId
+            }
+            await api
+            .post('/api/blogs')
+            .send(newValidPost).set('Authorization','Bearer ' + token)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
+
+           
+            
+            done()
+        })
+       
+       test('increase the total number of blogs when adding status is successful',async(done)=>{
+            const user = await testHelper.usersInDb()
+         
+            const userId = user[0].id
+            const newValidPost ={
+                title: "This is new post",
+                author:"London King",
+                url: "https://londonking.com/",
+                userId
+            }
+            await api
+            .post('/api/blogs')
+            .send(newValidPost).set('Authorization','Bearer ' + token)
+
+            blogsInDb = await testHelper.blogsInDb()
+            expect(blogsInDb.length).toBe(testHelper.initialBlogs.length+1)
+            done()
+       })
+       
+       test('correct blog content is saved to database when adding status is successful',async(done)=>{
+            const user = await testHelper.usersInDb()
+         
+            const userId = user[0].id
+            const newValidPost ={
+                title: "This is new post",
+                author:"London King",
+                url: "https://londonking.com/",
+                userId
+            }
+            await api
+            .post('/api/blogs')
+            .send(newValidPost).set('Authorization','Bearer ' + token)
+
+            blogsInDb = await testHelper.blogsInDb()
+
+            const blogTitles = blogsInDb.map(blog=>blog.title)
+
+            expect(blogTitles).toContain('This is new post')
+            
+            done()
+       })
+
+       test('likes for new post will initially be 0 when adding status is successful',async(done)=>{
+            const user = await testHelper.usersInDb()
+         
+            const userId = user[0].id
+            const newValidPost ={
+                title: "This is new post",
+                author:"London King",
+                url: "https://londonking.com/",
+                userId
+            }
+            await api
+            .post('/api/blogs')
+            .send(newValidPost).set('Authorization','Bearer ' + token)
+
+            blogsInDb = await testHelper.blogsInDb()
+
+            const newAddedPost = blogsInDb.filter(blog=>blog.title==='This is new post')[0]
+
+            expect(newAddedPost.likes).toBe(0)
+            
+            done()
+
+       })
+    })
+    
 })
 
 
 
 afterAll(async(done)=>{
+   
+   
     await testHelper.closeConnection2TestDb()
+   
     done()
 })
+
+/**
+ *  describe('testing post request to /api/blogs, addition of a new blog',()=>{       
+        
+        
+        
+
+        
+        describe('when adding status is successful',()=>{
+                let blogsInDb
+                beforeAll(async(done)=>{
+                    blogsInDb = await testHelper.blogsInDb() //get all data
+                    done()
+                })
+
+                test('increase the total number of blogs in the system by one if successful',(done)=>{
+                    console.log('blogsInDb',blogsInDb)
+                    console.log('initialBlogs',testHelper.initialBlogs)
+                 
+                    expect(blogsInDb.length).toBe(testHelper.initialBlogs.length+1)
+                    done()
+                }) 
+                
+                test('correct blog content is saved to database',(done)=>{   
+                  
+                    const blogTitles = blogsInDb.map(blog=>blog.title)
+                    expect(blogTitles).toContain('This is new post')
+                    done()
+                
+                })
+
+                test('likes for new post will initially be 0',(done)=>{
+                   
+                    const newAddedPost = blogsInDb.filter(blog=>blog.title==='This is new post')[0]
+                    expect(newAddedPost.likes).toBe(0)
+                    done()
+                })
+
+                
+        })   
+        
+        
+        
+    })
+   
+ */

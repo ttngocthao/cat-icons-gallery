@@ -42,8 +42,8 @@ blogsRouter.post('/', async(request, response) => {
    *? (check /controllers/login to see which properties was signed to the token if needed)
   **/
   const decodedToken = jwt.verify(token,process.env.TOKEN_SECRET)
-  console.log('token',token)
-  console.log('decodedToken',decodedToken)
+  // console.log('token',token)
+  // console.log('decodedToken',decodedToken)
   
   if(!token || !decodedToken.id){
     return response.status(401).json({error: 'Token is missing or invalid'})

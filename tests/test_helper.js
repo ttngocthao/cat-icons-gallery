@@ -90,7 +90,7 @@ const seedData =async()=>{
     await secondUserInfo.save()
     //* End add a second user
 
-    // console.log(allUsersFromDb)
+    // console.log('allUsersFromDb')
 }
 
 
