@@ -39,12 +39,22 @@ const errorHandler = (error, request, response, next) => {
 }
 
 const tokenExtractor =(request,response,next)=>{
-
-  next()
+  
+  const authorization = request.get('authorization')
+ // console.log('from middleware - auth',authorization)
+  if(authorization && authorization.toLowerCase().startsWith('bearer ')){
+    request.token = authorization.substring(7) //returns the token string without the word 'bearer '
+    next()
+  }else{
+    next()
+  }
+  // return response.status(401).json({ error: 'Msg from middleware - Invalid token' })
+  // next()
 }
 
 module.exports = {
   requestLogger,
   unknownEndpoint,
-  errorHandler
+  errorHandler,
+  tokenExtractor
 }

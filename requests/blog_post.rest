@@ -1,10 +1,11 @@
 POST http://localhost:3003/api/blogs
-content-type: application/json
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRoYW90cnVvbmciLCJpZCI6IjYwM2Y3ZjI4ZTBmYzE5MTQ2ZTYwODBiNyIsImlhdCI6MTYxNTI3MDY3Mn0.EwNv-1aG12PdWZdYGfFioHghMew0MDTAi98I-EfLtS8
 
 {
-  "title": "this is the second post from Thao",
-  "author": "Thao",
-  "url": "https://abc.com",
-  "likes": 3,
-  "userId":"603f7f28e0fc19146e6080b7"
+  "title": "tests middleware position",
+  "author": "No name",
+  "url": "https://middleware.com",
+  "likes": 7
+
 }
