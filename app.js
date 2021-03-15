@@ -12,10 +12,16 @@ const blogsRouter = require('./controllers/blogs')
 const userRouter = require('./controllers/users')
 const loginRouter = require('./controllers/login')
 
-if(process.env.NODE_ENV!=='test'){
+if(process.env.NODE_ENV==='testWithFrontEnd'){
+    mongoose.connect(config.MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
+    .then(()=>{logger.info('Test with front end test - Connected to MongoDB')})
+    .catch((error)=>{ logger.error('error in connecting to MongoDB',error.message)})
+}
+
+if(process.env.NODE_ENV!=='test' && process.env.NODE_ENV!=='testWithFrontEnd'){
     mongoose.connect(config.MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
     .then(()=>{logger.info('Connected to MongoDB')})
-    .catch(()=>{ logger.error('error in connecting to MongoDB')})
+    .catch((error)=>{ logger.error('error in connecting to MongoDB',error.message)})
 }
 
 app.use(cors())
@@ -27,6 +33,11 @@ app.use(middleware.tokenExtractor)
 app.use('/api/users',userRouter)
 app.use('/api/login',loginRouter)
 app.use('/api/blogs',blogsRouter)
+
+if(process.env.NODE_ENV==='testWithFrontEnd'){
+    const testingRouter = require('./controllers/testing')
+    app.use('/api/testing',testingRouter)
+}
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
 
