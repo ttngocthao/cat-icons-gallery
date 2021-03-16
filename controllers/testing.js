@@ -6,7 +6,7 @@ testingRouter.post('/reset',async(req,res)=>{
     await Blog.deleteMany({})
     await User.deleteMany({})
     
-    res.status(204).end()
+    res.status(204).json('reset done!').end()
     
 })
 
