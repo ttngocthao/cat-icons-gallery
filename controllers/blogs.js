@@ -66,6 +66,25 @@ blogsRouter.post('/', async(request, response) => {
    
 })
 
+blogsRouter.post('/:id/comments',async(request,response)=>{
+  const body = request.body
+  if(!body.comment){
+    return response.status(400)
+  }
+  const blog = await Blog.findById(request.params.id)
+  if(!blog){
+    return response.status(404)
+  }
+  if(!blog.comments){
+    blog.comments =[]
+  }
+  blog.comments = [...blog.comments, body.comment]
+  // const {comments} = blog
+  // comments = [...comments, body.comment]
+  await blog.save()
+  response.status(201).json(blog)
+})
+
 blogsRouter.delete('/:id',async(request,response)=>{
  const decodedToken = jwt.verify(request.token,process.env.TOKEN_SECRET)
 
