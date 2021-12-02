@@ -1,12 +1,12 @@
 {
-  "name": "fullstackopen-2021-selftraining_part4",
+  "name": "Cat-icon-gallery-BE",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=production node index.js",
+    "start": "node index.js",
     "dev": "cross-env NODE_ENV=development nodemon index.js",
-    "start:test":"cross-env NODE_ENV=testWithFrontEnd node index.js",
+    "start:test": "cross-env NODE_ENV=testWithFrontEnd node index.js",
     "lint": "eslint",
     "test": "cross-env NODE_ENV=test jest --verbose --runInBand --testTimeout=20000 --forceExit",
     "test:blog_api": "npm run test -- tests/blog_api.test.js ",
@@ -36,7 +36,8 @@
     "http": "0.0.1-security",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.11.15",
-    "mongoose-unique-validator": "^2.0.3"
+    "mongoose-unique-validator": "^2.0.3",
+    "multer": "^1.4.3"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",

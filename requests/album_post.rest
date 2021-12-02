@@ -1,0 +1,7 @@
+POST http://localhost:5001/api/albums
+content-type: application/json
+
+{
+  "name":"First Album",
+  "createdBy":"61a39bec2961a359985d736e"
+}
