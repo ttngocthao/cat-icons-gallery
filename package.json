@@ -8,7 +8,7 @@
     "dev": "cross-env NODE_ENV=development nodemon index.js",
     "start:test": "cross-env NODE_ENV=testWithFrontEnd node index.js",
     "lint": "eslint",
-    "test": "cross-env NODE_ENV=test jest --verbose --runInBand --testTimeout=20000 --forceExit --watch",
+    "test": "cross-env NODE_ENV=test jest --verbose --runInBand --testTimeout=100000 --forceExit --watch",
     "test:blog_api": "npm run test -- tests/blog_api.test.js ",
     "test:user_api": "npm run test -- tests/user_api.test.js",
     "test:login_api": "npm run test -- tests/login_api.test.js",
@@ -38,6 +38,7 @@
     "mongoose": "^5.11.15",
     "mongoose-unique-validator": "^2.0.3",
     "multer": "^1.4.3",
+    "sharp": "^0.29.3",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

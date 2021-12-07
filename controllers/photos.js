@@ -1,6 +1,8 @@
 const photoRouter = require("express").Router();
 const Photo = require("../models/Photo");
 const User = require("../models/User");
+const sharp = require("sharp");
+const path = require("path");
 const { filterQuery } = require("../utils/filterQuery");
 
 const multer = require("multer");
@@ -44,6 +46,13 @@ const upload = multer({ storage: configStorage("./images/gallery") }); //make su
 photoRouter.post("/", upload.single("file"), async (req, res, next) => {
   const file = req.file;
   const { createdBy } = req.body;
+  console.log(file);
+  //resize image
+  const resizeFile = await sharp(file.path)
+    .resize(500, 500)
+    .png({ quality: 100 })
+    .toFile(`${file.destination}/resized-${file.filename}`);
+
   const user = await User.findById(createdBy); //!when authication ready, replace createdBy with current user
   if (!user) {
     throw Error("user cannot be found");
@@ -52,20 +61,21 @@ photoRouter.post("/", upload.single("file"), async (req, res, next) => {
     throw Error("File is empty");
   }
   try {
-    const { filename, mimetype, path } = file;
-
+    //  const { filename, mimetype, path } = file;
+    console.log(resizeFile);
+    //const result = resizeFile;
     const newPhoto = new Photo({
-      name: filename,
+      name: `resized-${file.filename}`,
       createdBy: createdBy,
-      extension: mimetype,
-      path: path,
+      extension: file.mimetype,
+      path: `${file.destination}/resized-${file.filename}`,
     });
 
     const result = await newPhoto.save();
 
     user.uploadImages = [...user.uploadImages, result._id];
     await user.save();
-
+    await unlinkAsync(file.path);
     res.status(201).json(result);
   } catch (error) {
     console.log("Error in creating photo");
