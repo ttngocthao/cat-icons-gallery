@@ -55,7 +55,9 @@ app.use(express.json());
 
 app.use(middleware.requestLogger);
 app.use(middleware.tokenExtractor);
-
+app.get("/", (_req, res) => {
+  res.send("cat icon gallerty");
+}); //for testing the hosting service
 app.use("/images/gallery", express.static("./images/gallery"));
 app.use("/api/users", userRouter);
 app.use("/api/login", loginRouter);
