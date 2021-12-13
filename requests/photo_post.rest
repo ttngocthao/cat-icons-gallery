@@ -1,6 +1,3 @@
-POST http://localhost:5001/api/photos
+GET  http://localhost:5001/api/photos
 content-type: application/json
 
-{
-  
-}

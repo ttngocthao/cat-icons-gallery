@@ -2,6 +2,6 @@ POST http://localhost:5001/api/albums
 content-type: application/json
 
 {
-  "name":"First Album",
-  "createdBy":"61a39bec2961a359985d736e"
+  "name":"Paul Delete Album",
+  "createdBy":"61a39c022961a359985d736f"
 }
