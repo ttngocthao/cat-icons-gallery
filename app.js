@@ -55,6 +55,7 @@ app.use(express.json());
 
 app.use(middleware.requestLogger);
 app.use(middleware.tokenExtractor);
+
 app.use("/images/gallery", express.static("./images/gallery"));
 app.use("/api/users", userRouter);
 app.use("/api/login", loginRouter);
