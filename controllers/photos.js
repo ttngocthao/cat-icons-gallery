@@ -124,7 +124,7 @@ photoRouter.delete("/:id", async (req, res, next) => {
 photoRouter.get('/:id',async(req,res,next)=>{
   try {
     const {id} = req.params;
-    const photo = await Photo.findById(id);
+    const photo = await Photo.findById(id).populate('album');
     return res.status(201).json(photo);
   } catch (error) {
     next(error)
