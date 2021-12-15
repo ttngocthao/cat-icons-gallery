@@ -12,6 +12,10 @@ const photoSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
+  album:{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:'Album'
+  },
   extension: {
     type: String,
     required: true,

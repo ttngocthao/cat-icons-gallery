@@ -1,6 +1,7 @@
 const photoRouter = require("express").Router();
 const Photo = require("../models/Photo");
 const User = require("../models/User");
+const Album = require('../models/Album');
 const sharp = require("sharp");
 const path = require("path");
 const { filterQuery } = require("../utils/filterQuery");
@@ -42,21 +43,26 @@ const createFileName = (req, file, cb) => {
 
 //this is the middleware.
 const upload = multer({ storage: configStorage("./images/gallery") }); //make sure to add use method for this folder in app.js
+
 //private route
 photoRouter.post("/", upload.single("file"), async (req, res, next) => {
   const file = req.file;
-  const { createdBy } = req.body;
+  const { createdBy,albumId } = req.body;
+  const user = await User.findById(createdBy); //!when authication ready, replace createdBy with current user
+  const album =albumId ?  await Album.findById(albumId) :'';
+
+  if (!user) {
+    throw Error("user cannot be found");
+  }
+
   console.log(file);
   //resize image
   const resizeFile = await sharp(file.path)
     .resize(500, 500)
     .png({ quality: 100 })
-    .toFile(`${file.destination}/resized-${file.filename}`);
+    .toFile(`${file.destination}/${user.id}-${file.filename}`);
 
-  const user = await User.findById(createdBy); //!when authication ready, replace createdBy with current user
-  if (!user) {
-    throw Error("user cannot be found");
-  }
+  
   if (!file) {
     throw Error("File is empty");
   }
@@ -68,9 +74,12 @@ photoRouter.post("/", upload.single("file"), async (req, res, next) => {
       name: `resized-${file.filename}`,
       createdBy: createdBy,
       extension: file.mimetype,
-      path: `${file.destination}/resized-${file.filename}`,
+      path: `${file.destination}/${user.id}-${file.filename}`,
     });
 
+    if(album && album!==''){
+      newPhoto.album= album.id //add album id to photo
+    }
     const result = await newPhoto.save();
 
     user.uploadImages = [...user.uploadImages, result._id];
@@ -87,7 +96,7 @@ photoRouter.post("/", upload.single("file"), async (req, res, next) => {
 photoRouter.get("/", async (req, res, next) => {
   try {
     const filters = req.query;
-    const photos = await Photo.find({});
+    const photos = await Photo.find({}).populate('album');
     const filterPhotos = filterQuery(filters, photos);
     return res.status(201).json(filterPhotos);
   } catch (error) {
@@ -95,6 +104,7 @@ photoRouter.get("/", async (req, res, next) => {
   }
 });
 
+//private route
 photoRouter.delete("/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -110,5 +120,14 @@ photoRouter.delete("/:id", async (req, res, next) => {
     next(error);
   }
 });
-
+//public route
+photoRouter.get('/:id',async(req,res,next)=>{
+  try {
+    const {id} = req.params;
+    const photo = await Photo.findById(id);
+    return res.status(201).json(photo);
+  } catch (error) {
+    next(error)
+  }
+})
 module.exports = photoRouter;
