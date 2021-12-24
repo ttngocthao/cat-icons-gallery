@@ -129,19 +129,33 @@ describe("testing create a user", () => {
 
   test("not create a user if email address has been used before", async () => {
     //  await User.deleteMany();
-    await testHelper.seedUsers();
+   const user1 = {
+     userName:'user1',
+     email:'user1@mail.com'
+   }
+   await testHelper.seedUsers(user1)
     const usersInDbAtStart = await testHelper.findUsersInDb(); //check database before create a user
-    const newUser = {
-      userName: "New User",
-      email: "newUser@mail.com",
-      password: "myPasswordHere",
-    };
-    await api.post("/api/users").send(newUser).expect(400);
-
+    const user2 = {
+     userName:'user2',
+     email:'user1@mail.com'
+   }
+   const addUserWithExistenceEmail =async()=>{
+     await api.post("/api/users").send(user2)
+   }
+    expect(addUserWithExistenceEmail).toThrowError(ValidationError)
+   // console.log('res',res);
+ //   expect(res.status).toBe(400);
     const usersInDbAtEnd = await testHelper.findUsersInDb(); // check database after creating a user
 
     expect(usersInDbAtEnd.length).toBe(usersInDbAtStart.length);
 
-    await testHelper.closeConnection2TestDb();
+    
   });
+});
+
+
+afterAll(async (done) => {
+    await testHelper.clearDatabase();
+  await testHelper.closeConnection2TestDb();
+  done();
 });

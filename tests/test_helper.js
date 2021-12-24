@@ -61,6 +61,7 @@ const findUsersInDb = async () => {
   const users = await User.find({});
   return users.map((user) => user.toJSON());
 };
+
 const clearDatabase = async () => {
   try {
     // await Album.deleteMany({});
@@ -70,7 +71,9 @@ const clearDatabase = async () => {
     console.log(error);
   }
 };
-const seedUsers = async ({ userName, email }) => {
+
+const seedUsers = async ({ userName, email }={}) => {
+  
   const passwordHash = await hashPassword("My password");
   const defaultUser = new User({
     userName: userName ? userName : "New User",
