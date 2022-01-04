@@ -5,29 +5,32 @@ const bcrypt = require('bcrypt')
 
 loginRouter.post('/',async(req,res)=>{
     /**
-     *? get username and password from req.body
-     *? check if username exists
+     *? get email and password from req.body
+     *? check if email exists
      *? check password matches
-     *? if username and password are correct, generates token with the response
+     *? if email and password are correct, generates token with the response
      */
     const body = req.body
-    const user =await User.findOne({username:body.username})
+    const user =await User.findOne({email:body.email})
     const passwordCorrect = user===null ? false : await bcrypt.compare(body.password,user.passwordHash)
-
-    if(!user || !passwordCorrect){
-        return res.status(401).json({error:'invalid username or password'})
+    if(!user){
+         return res.status(401).json({error:'invalid email '})
+    }
+    if(!passwordCorrect){
+        return res.status(401).json({error:'invalid email or password'})
         //throw Error('Invalid username or password')
     }
 
     //use username and id info to generate token
     const userForToken ={
         username: user.username,
-        id: user._id
+        id: user._id,
+        email:user.email
     }
 
     const token = jwt.sign(userForToken,process.env.TOKEN_SECRET)
 
-    res.status(200).send({token,username: user.username,name: user.name})
+    res.status(200).send({token,username: user.username,email: user.email})
 })
 
 module.exports = loginRouter

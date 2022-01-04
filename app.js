@@ -14,21 +14,21 @@ const albumRouter = require("./controllers/albums");
 const photoRouter = require("./controllers/photos");
 const loginRouter = require("./controllers/login");
 
-if (process.env.NODE_ENV === "testWithFrontEnd") {
-  mongoose
-    .connect(config.MONGODB_URL, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      useFindAndModify: false,
-      useCreateIndex: true,
-    })
-    .then(() => {
-      logger.info("Test with front end test - Connected to MongoDB");
-    })
-    .catch((error) => {
-      logger.error("error in connecting to MongoDB", error.message);
-    });
-}
+// if (process.env.NODE_ENV === "testWithFrontEnd") {
+//   mongoose
+//     .connect(config.MONGODB_URL, {
+//       useNewUrlParser: true,
+//       useUnifiedTopology: true,
+//       useFindAndModify: false,
+//       useCreateIndex: true,
+//     })
+//     .then(() => {
+//       logger.info("Test with front end test - Connected to MongoDB");
+//     })
+//     .catch((error) => {
+//       logger.error("error in connecting to MongoDB", error.message);
+//     });
+// }
 
 if (
   process.env.NODE_ENV !== "test" &&

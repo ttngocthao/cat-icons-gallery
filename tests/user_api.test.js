@@ -137,17 +137,21 @@ describe("testing create a user", () => {
     const usersInDbAtStart = await testHelper.findUsersInDb(); //check database before create a user
     const user2 = {
      userName:'user2',
-     email:'user1@mail.com'
+     email:'user1@mail.com',
+     password: "myPasswordHere"
    }
-   const addUserWithExistenceEmail =async()=>{
-     await api.post("/api/users").send(user2)
-   }
-    expect(addUserWithExistenceEmail).toThrowError(ValidationError)
-   // console.log('res',res);
- //   expect(res.status).toBe(400);
-    const usersInDbAtEnd = await testHelper.findUsersInDb(); // check database after creating a user
+  //  const addUserWithExistenceEmail =async()=>{
+  //    await api.post("/api/users").send(user2)
+  //  }
+  //   expect(addUserWithExistenceEmail).toThrow()
+  const res = await api.post('/api/users').send(user2);
+  // console.log('res',res.body.error);
+  // expect(res.body.error).toBeDefined();
+   
+   expect(res.status).toBe(400);
+    // const usersInDbAtEnd = await testHelper.findUsersInDb(); // check database after creating a user
 
-    expect(usersInDbAtEnd.length).toBe(usersInDbAtStart.length);
+    // expect(usersInDbAtEnd.length).toBe(usersInDbAtStart.length);
 
     
   });
